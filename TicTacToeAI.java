@@ -1,22 +1,90 @@
 import java.util.ArrayList;
-public class TicTacToeAI
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+public class TicTacToeAI extends JFrame
 {
 	private Matrix<Integer> board;
-	
+	private JPanel score_panel = new JPanel();
+	private JLabel score;
+	private JPanel button_panel = new JPanel(new GridLayout(3,3));
+	private JButton[] buttons = new JButton[9];
+	private int x_win = 0;
+	private int o_win = 0;
 	public static void main(String[] args)
 	{
 		TicTacToeAI ai = new TicTacToeAI();
-		ai.playGame();
+		//ai.playGame();
 	}
 	
-	public TicTacToeAI()
+	public void reset()
 	{
+		score.setText("X: " + x_win + "O: " + o_win);
+		for(int i = 0; i <= 8; i++)
+		{
+			buttons[i].setText("--");	
+		}
+		this.add(button_panel);
 		board = new Matrix<Integer>(3,3);
 		int cols = board.getNumColumns();		
 		for(int index = 1; index <= (board.getNumColumns() * board.getNumRows()); index++)
 		{
 			board.setElement(((index -1)/cols + 1), ((index -1)%cols + 1),0); //zero represents an open space
 		}
+		
+	}
+	class XOActionListener implements ActionListener
+	{
+		public void actionPerformed(ActionEvent ae)
+		{
+			int cols = board.getNumColumns();
+			JButton button = (JButton) ae.getSource();
+			int index = Integer.parseInt(button.getActionCommand());
+			System.out.println("button number " + index);
+			board.setElement(((index -1)/cols + 1), ((index -1)%cols + 1),1);
+			button.setText("X");
+			if(isWinner())
+			{
+				reset();
+			}
+			Move next_move = TicTacToeAI.this.makeMove();
+			System.out.println(next_move.getRow());
+			System.out.println(next_move.getCol());
+			board.setElement(next_move.getRow(), next_move.getCol(), -1);
+			buttons[(next_move.getRow()-1) *cols + (next_move.getCol()-1)].setText("O");
+			if(isWinner())
+			{
+				reset();
+			}
+		}
+	}
+	
+	public TicTacToeAI()
+	{
+		score = new JLabel("X: 0 O: 0");
+		score_panel.add(score);
+		this.add(score_panel, BorderLayout.NORTH);
+		for(int i = 0; i <= 8; i++)
+		{
+			buttons[i] = new JButton();
+			buttons[i].setActionCommand((i+1)+"");
+			buttons[i].setText("--");
+		
+			buttons[i].addActionListener(new XOActionListener());
+			button_panel.add(buttons[i]);
+			
+		}
+		this.add(button_panel, BorderLayout.CENTER);
+		board = new Matrix<Integer>(3,3);
+		int cols = board.getNumColumns();		
+		for(int index = 1; index <= (board.getNumColumns() * board.getNumRows()); index++)
+		{
+			board.setElement(((index -1)/cols + 1), ((index -1)%cols + 1),0); //zero represents an open space
+		}
+		
+		this.setVisible(true);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setSize(400,400);
 	}
 	
 	public void playGame()
@@ -26,27 +94,36 @@ public class TicTacToeAI
 		while(!isWinner())
 		{
 			this.displayBoard();
+			System.out.println();
 			int selection = kb.readInt("\r\nEnter location: ");
 			board.setElement(((selection -1)/cols + 1), ((selection -1)%cols + 1),1);
+			this.displayBoard();
+			System.out.println();
 			Move next_move = this.makeMove();
 			System.out.println(next_move.getRow());
 			System.out.println(next_move.getCol());
 			board.setElement(next_move.getRow(), next_move.getCol(), -1);
+			this.displayBoard();
+			System.out.println();
 		}
 	}
 	public boolean isWinner()
 	{
-		
+		System.out.println("In check winner");
 		//check diagonal sums
 		int sum = diagonalSum(true);
 		if(sum == 3)
 		{
+			JOptionPane.showMessageDialog(this, "X Wins");
 			System.out.println("X Wins");
+			x_win++;
 			return true;
 		}
 		else if(sum == -3)
 		{
+			JOptionPane.showMessageDialog(this, "O Wins");
 			System.out.println("O Wins");
+			o_win++;
 			return true;
 		}
 		//check row sums
@@ -55,12 +132,16 @@ public class TicTacToeAI
 			sum = rowSum(r);
 			if(sum == 3)
 			{
+				JOptionPane.showMessageDialog(this, "X Wins");
 				System.out.println("X Wins");
+				x_win++;
 				return true;
 			}
 			else if(sum == -3)
 			{
+				JOptionPane.showMessageDialog(this, "O Wins");
 				System.out.println("O Wins");
+				o_win++;
 				return true;
 			}
 		}
@@ -70,12 +151,16 @@ public class TicTacToeAI
 			sum = columnSum(c);
 			if(sum == 3)
 			{
+				JOptionPane.showMessageDialog(this, "X Wins");
 				System.out.println("X Wins");
+				x_win++;
 				return true;
 			}
 			else if(sum == -3)
 			{
+				JOptionPane.showMessageDialog(this, "O Wins");
 				System.out.println("O Wins");
+				o_win++;
 				return true;
 			}
 		}
@@ -150,11 +235,12 @@ public class TicTacToeAI
 					}
 					int sum = horizontal+vertical+diag;
 					
-					moves.add(new Move((count-1)/cols +1, (count-1)%cols +1, sum));
+					moves.add(new Move(r, c, sum));
 				}
 			}
 		}
 		
+		System.out.println(moves.size());
 		int min_sum = 100;
 		Move to_return = null;
 		
