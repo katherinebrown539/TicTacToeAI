@@ -213,7 +213,9 @@ public class TicTacToeAI extends JFrame
 			for(int c = 1; c <= board.getNumColumns(); c++)
 			{
 				int horizontal = rowSum(r);
+				if(horizontal == 2) return new Move(r,c,horizontal);
 				int vertical = columnSum(c);
+				if(vertical == 2) return new Move(r,c,horizontal);
 				int diag = 0;
 				count = (r-1) *board.getNumColumns() + (c-1);
 				int i = board.getElement(r,c);
@@ -224,14 +226,19 @@ public class TicTacToeAI extends JFrame
 					if(count == 0 || count == 8)
 					{
 						diag = diagonalSum(true);
+						if(diag == 2) return new Move(r,c,horizontal);
 					}
 					else if(count == 2 || count == 6)
 					{
 						diag = diagonalSum(false);
+						if(diag == 2) return new Move(r,c,horizontal);
 					}
 					else if(count == 5)
 					{
-						diag = (diagonalSum(true) + diagonalSum(false))/2;
+						int up = diagonalSum(true);
+						int down = diagonalSum(false);
+						if(up == 2 || down == 2) return new Move(r,c,horizontal);
+						diag = ( up + down)/2;
 					}
 					int sum = horizontal+vertical+diag;
 					
