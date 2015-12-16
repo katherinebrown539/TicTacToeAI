@@ -11,6 +11,7 @@ public class TicTacToeAI extends JFrame
 	private JButton[] buttons = new JButton[9];
 	private int x_win = 0;
 	private int o_win = 0;
+	private int num_picked = 0;
 	public static void main(String[] args)
 	{
 		TicTacToeAI ai = new TicTacToeAI();
@@ -19,10 +20,12 @@ public class TicTacToeAI extends JFrame
 	
 	public void reset()
 	{
+		num_picked = 0;
 		score.setText("X: " + x_win + "O: " + o_win);
 		for(int i = 0; i <= 8; i++)
 		{
 			buttons[i].setText("--");	
+			
 		}
 		this.add(button_panel);
 		board = new Matrix<Integer>(3,3);
@@ -39,10 +42,12 @@ public class TicTacToeAI extends JFrame
 		{
 			int cols = board.getNumColumns();
 			JButton button = (JButton) ae.getSource();
+			if((button.getText()).equals("X") || (button.getText()).equals("O")) return;
 			int index = Integer.parseInt(button.getActionCommand());
 			System.out.println("button number " + index);
 			board.setElement(((index -1)/cols + 1), ((index -1)%cols + 1),1);
 			button.setText("X");
+			num_picked++;
 			if(isWinner())
 			{
 				reset();
@@ -52,6 +57,7 @@ public class TicTacToeAI extends JFrame
 			System.out.println(next_move.getCol());
 			board.setElement(next_move.getRow(), next_move.getCol(), -1);
 			buttons[(next_move.getRow()-1) *cols + (next_move.getCol()-1)].setText("O");
+			num_picked++;
 			if(isWinner())
 			{
 				reset();
@@ -109,6 +115,11 @@ public class TicTacToeAI extends JFrame
 	}
 	public boolean isWinner()
 	{
+		if(num_picked == 9)
+		{
+			JOptionPane.showMessageDialog(this, "TIE");
+			return true;
+		}
 		System.out.println("In check winner");
 		//check diagonal sums
 		int sum = diagonalSum(true);
@@ -201,7 +212,7 @@ public class TicTacToeAI extends JFrame
 		}
 	}
 	
-	
+	//uncomment lines 216-219 and comment lines 229-232 for cheating
 	public Move makeMove()
 	{
 		ArrayList<Move> moves = new ArrayList<Move>();
@@ -212,10 +223,12 @@ public class TicTacToeAI extends JFrame
 		{
 			for(int c = 1; c <= board.getNumColumns(); c++)
 			{
+				/*
 				int horizontal = rowSum(r);
 				if(horizontal == 2) return new Move(r,c,horizontal);
 				int vertical = columnSum(c);
 				if(vertical == 2) return new Move(r,c,horizontal);
+				*/
 				int diag = 0;
 				count = (r-1) *board.getNumColumns() + (c-1);
 				int i = board.getElement(r,c);
@@ -223,6 +236,12 @@ public class TicTacToeAI extends JFrame
 				//System.out.println(i);
 				if(i == 0)
 				{
+					
+					int horizontal = rowSum(r);
+					if(horizontal == 2) return new Move(r,c,horizontal);
+					int vertical = columnSum(c);
+					if(vertical == 2) return new Move(r,c,horizontal);
+					
 					if(count == 0 || count == 8)
 					{
 						diag = diagonalSum(true);
