@@ -13,6 +13,7 @@ public class TicTacToeAI extends JFrame
 	private JButton[] buttons = new JButton[9];
 	private int x_win = 0;
 	private int o_win = 0;
+	private int ties = 0;
 	private int num_picked = 0;
 	public static void main(String[] args)
 	{
@@ -23,7 +24,7 @@ public class TicTacToeAI extends JFrame
 	public void reset()
 	{
 		num_picked = 0;
-		score.setText("X: " + x_win + "O: " + o_win);
+		score.setText("X: " + x_win + "O: " + o_win + "Ties: " + ties);
 		for(int i = 0; i <= 8; i++)
 		{
 			buttons[i].setText("--");	
@@ -73,7 +74,7 @@ public class TicTacToeAI extends JFrame
 	
 	public TicTacToeAI()
 	{
-		score = new JLabel("X: 0 O: 0");
+		score = new JLabel("X: 0 O: 0 Ties: 0");
 		score_panel.add(score);
 		this.add(score_panel, BorderLayout.NORTH);
 		for(int i = 0; i <= 8; i++)
@@ -197,6 +198,7 @@ public class TicTacToeAI extends JFrame
 		if(num_picked == 9)
 		{
 			JOptionPane.showMessageDialog(this, "TIE");
+			ties++;
 			return true;
 		}
 		return false;
