@@ -4,6 +4,8 @@ import java.awt.event.*;
 import javax.swing.*;
 public class TicTacToeAI extends JFrame
 {
+	//optimize ai by keeping up with last move and looking for local possibilities
+	private Move last_move;
 	private Matrix<Integer> board;
 	private JPanel score_panel = new JPanel();
 	private JLabel score;
@@ -44,7 +46,7 @@ public class TicTacToeAI extends JFrame
 			JButton button = (JButton) ae.getSource();
 			if((button.getText()).equals("X") || (button.getText()).equals("O")) return;
 			int index = Integer.parseInt(button.getActionCommand());
-			System.out.println("button number " + index);
+			//System.out.println("button number " + index);
 			board.setElement(((index -1)/cols + 1), ((index -1)%cols + 1),1);
 			button.setText("X");
 			num_picked++;
@@ -53,8 +55,12 @@ public class TicTacToeAI extends JFrame
 				reset();
 			}
 			Move next_move = TicTacToeAI.this.makeMove();
-			System.out.println(next_move.getRow());
-			System.out.println(next_move.getCol());
+			//System.out.println(next_move.getRow());
+			//System.out.println(next_move.getCol());
+			System.out.println();
+			//System.out.println(next_move.getRow());
+			//System.out.println(next_move.getCol());
+			//System.out.println((next_move.getRow()-1) *cols + (next_move.getCol()-1));
 			board.setElement(next_move.getRow(), next_move.getCol(), -1);
 			buttons[(next_move.getRow()-1) *cols + (next_move.getCol()-1)].setText("O");
 			num_picked++;
@@ -115,14 +121,26 @@ public class TicTacToeAI extends JFrame
 	}
 	public boolean isWinner()
 	{
-		if(num_picked == 9)
-		{
-			JOptionPane.showMessageDialog(this, "TIE");
-			return true;
-		}
+		
 		System.out.println("In check winner");
 		//check diagonal sums
-		int sum = diagonalSum(true);
+		int sum = upDiagonal();
+		if(sum == 3)
+		{
+			JOptionPane.showMessageDialog(this, "X Wins");
+			System.out.println("X Wins");
+			x_win++;
+			return true;
+		}
+		else if(sum == -3)
+		{
+			JOptionPane.showMessageDialog(this, "O Wins");
+			System.out.println("O Wins");
+			o_win++;
+			return true;
+		}
+		
+		sum = downDiagonal();
 		if(sum == 3)
 		{
 			JOptionPane.showMessageDialog(this, "X Wins");
@@ -175,6 +193,12 @@ public class TicTacToeAI extends JFrame
 				return true;
 			}
 		}
+		
+		if(num_picked == 9)
+		{
+			JOptionPane.showMessageDialog(this, "TIE");
+			return true;
+		}
 		return false;
 	}
 	public void displayBoard()
@@ -212,9 +236,10 @@ public class TicTacToeAI extends JFrame
 		}
 	}
 	
-	//uncomment lines 216-219 and comment lines 229-232 for cheating
+	//uncomment lines 245-248 and comment lines 258-261 for cheating
 	public Move makeMove()
 	{
+		Move next_move = null;
 		ArrayList<Move> moves = new ArrayList<Move>();
 		int count = 0;
 		int cols = board.getNumColumns();
@@ -223,6 +248,7 @@ public class TicTacToeAI extends JFrame
 		{
 			for(int c = 1; c <= board.getNumColumns(); c++)
 			{
+				//Move next_move;
 				/*
 				int horizontal = rowSum(r);
 				if(horizontal == 2) return new Move(r,c,horizontal);
@@ -238,35 +264,66 @@ public class TicTacToeAI extends JFrame
 				{
 					
 					int horizontal = rowSum(r);
-					if(horizontal == 2) return new Move(r,c,horizontal);
+					if(horizontal == 2) {
+						next_move = new Move(r,c,0,horizontal,0);
+						//return last_move;
+					}
 					int vertical = columnSum(c);
-					if(vertical == 2) return new Move(r,c,horizontal);
+					if(vertical == 2) {
+						next_move = new Move(r,c,vertical,0,0);
+						//return last_move;
+					}
 					
 					if(count == 0 || count == 8)
 					{
-						diag = diagonalSum(true);
-						if(diag == 2) return new Move(r,c,horizontal);
+						diag = downDiagonal();
+						if(diag == 2) {
+						next_move = new Move(r,c,0,0,diag);
+						//return last_move;
+						}
 					}
 					else if(count == 2 || count == 6)
 					{
-						diag = diagonalSum(false);
-						if(diag == 2) return new Move(r,c,horizontal);
+						diag = upDiagonal();
+						System.out.println(count);
+						System.out.println(r);
+						System.out.println(c);
+						if(diag == 2) {
+						next_move = new Move(r,c,0,0,diag);
+						//return last_move;
 					}
-					else if(count == 5)
+					}
+					else if(count == 4)
 					{
-						int up = diagonalSum(true);
-						int down = diagonalSum(false);
-						if(up == 2 || down == 2) return new Move(r,c,horizontal);
-						diag = ( up + down)/2;
+						int up = upDiagonal();
+						int down = downDiagonal();
+						//System.out.println(up);
+						//System.out.println(down);
+						if(up == 2 )
+						{
+							next_move = new Move(r,c,0,0,up);
+							//return last_move;
+						}	
+						else if(down == 2)
+						{
+							next_move = new Move(r,c,0,0,down);
+						}
+						else{
+							diag = ( up + down)/2;
+						}
 					}
-					int sum = horizontal+vertical+diag;
 					
-					moves.add(new Move(r, c, sum));
+					else
+					{
+						int sum = horizontal+vertical+diag;
+						
+						moves.add(new Move(r, c, horizontal, vertical, diag));
+					}
 				}
 			}
 		}
 		
-		System.out.println(moves.size());
+		//System.out.println(moves.size());
 		int min_sum = 100;
 		Move to_return = null;
 		
@@ -279,6 +336,19 @@ public class TicTacToeAI extends JFrame
 			}
 		}
 		
+		
+		
+		if(to_return.getHorizontal() != -2 && to_return.getVertical() != -2 && to_return.getDiagonal() != -2 && next_move != null || to_return == null)
+		{
+			to_return = next_move;
+		}
+		
+		/*
+		System.out.println();
+		System.out.println(next_move.getSum());
+		System.out.println(next_move.getRow());
+		System.out.println(next_move.getCol());
+		*/
 		return to_return;
 	}
 	
@@ -309,15 +379,13 @@ public class TicTacToeAI extends JFrame
 	
 	//dir = true = down diagonal
 	//dir = false = up diagonal
-	public int diagonalSum(boolean dir)
+	public int downDiagonal()
 	{
-		if(dir)
-		{
-			return board.getElement(1,1)+board.getElement(2,2)+board.getElement(3,3);
-		}
-		else
-		{
+		return board.getElement(1,1)+board.getElement(2,2)+board.getElement(3,3);
+	}
+	public int upDiagonal()
+	{
 			return board.getElement(3,1)+board.getElement(2,2)+board.getElement(1,3);
-		}
+		
 	}
 }
