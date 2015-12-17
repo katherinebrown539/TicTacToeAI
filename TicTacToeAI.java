@@ -4,7 +4,7 @@ import java.awt.event.*;
 import javax.swing.*;
 public class TicTacToeAI extends JFrame
 {
-	//optimize ai by keeping up with last move and looking for local possibilities
+	
 	private Move last_move;
 	private Matrix<Integer> board;
 	private JPanel score_panel = new JPanel();
