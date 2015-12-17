@@ -112,8 +112,8 @@ public class TicTacToeAI extends JFrame
 			this.displayBoard();
 			System.out.println();
 			Move next_move = this.makeMove();
-			System.out.println(next_move.getRow());
-			System.out.println(next_move.getCol());
+			//System.out.println(next_move.getRow());
+			//System.out.println(next_move.getCol());
 			board.setElement(next_move.getRow(), next_move.getCol(), -1);
 			this.displayBoard();
 			System.out.println();
@@ -285,9 +285,9 @@ public class TicTacToeAI extends JFrame
 					else if(count == 2 || count == 6)
 					{
 						diag = upDiagonal();
-						System.out.println(count);
-						System.out.println(r);
-						System.out.println(c);
+						//System.out.println(count);
+					//	System.out.println(r);
+					//	System.out.println(c);
 						if(diag == 2) {
 						next_move = new Move(r,c,0,0,diag);
 						//return last_move;
@@ -312,33 +312,40 @@ public class TicTacToeAI extends JFrame
 							diag = ( up + down)/2;
 						}
 					}
-					
-					else
-					{
+
 						int sum = horizontal+vertical+diag;
 						
 						moves.add(new Move(r, c, horizontal, vertical, diag));
-					}
+					
 				}
 			}
 		}
 		
-		//System.out.println(moves.size());
+		System.out.println(moves.size());
 		int min_sum = 100;
-		Move to_return = null;
+		Move to_return = next_move;
 		
 		for(Move m : moves)
 		{
-			if(m.getSum() < min_sum)
+			to_return = m;
+			if(m.getHorizontal() == -2 || m.getVertical() == -2 || m.getDiagonal() == -2)
+			{
+				
+				return m;
+			}
+			else if(m.getSum() < min_sum)
 			{
 				min_sum = m.getSum();
 				to_return = m;
 			}
+			
+			
+			
 		}
 		
 		
 		
-		if(to_return.getHorizontal() != -2 && to_return.getVertical() != -2 && to_return.getDiagonal() != -2 && next_move != null || to_return == null)
+		if(to_return == null || (to_return.getHorizontal() != -2 && to_return.getVertical() != -2 && to_return.getDiagonal() != -2 && next_move != null) )
 		{
 			to_return = next_move;
 		}
@@ -350,6 +357,7 @@ public class TicTacToeAI extends JFrame
 		System.out.println(next_move.getCol());
 		*/
 		return to_return;
+		//return next_move;
 	}
 	
 	
