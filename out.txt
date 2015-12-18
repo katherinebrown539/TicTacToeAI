@@ -1,0 +1,53 @@
+commit b80431579a3db32efb75d51aa188edfc681926dc
+Author: Katherine Brown <katherine.e.brown.68@gmail.com>
+Date:   Thu Dec 17 18:52:24 2015 -0600
+
+    OO goodness!!!! GUI and AI are separted (decoupled, to be fancy about it), and there's a cute little abstract class to make my life easier when I write future AIs. Do I dare call this AI unbeatable??
+
+commit 89c30e43971360237ee9f8d4de71369f3e3072ef
+Author: Katherine Brown <katherine.e.brown.68@gmail.com>
+Date:   Thu Dec 17 10:33:06 2015 -0600
+
+    Even MORE housekeeping
+
+commit c00e68cf8231516d610700675f41d63a158125d6
+Author: Katherine Brown <katherine.e.brown.68@gmail.com>
+Date:   Thu Dec 17 10:28:03 2015 -0600
+
+    Just some housekeeping
+
+commit 1206cee64dec7f523ade36530031518a33be7ee4
+Author: Katherine Brown <katherine.e.brown.68@gmail.com>
+Date:   Thu Dec 17 10:21:27 2015 -0600
+
+    AI is much better now. It puts up a very good fight!
+
+commit e93489ab497689ff503eeed3456e927d8d51c93d
+Author: Katherine Brown <katherine.e.brown.68@gmail.com>
+Date:   Wed Dec 16 20:12:57 2015 -0600
+
+    Algorithm is much better. Still some bugs to squash though
+
+commit de3235f1b9bdc68a33be5401c2c0886de05a334e
+Author: Katherine Brown <katherine.e.brown.68@gmail.com>
+Date:   Tue Dec 15 20:49:09 2015 -0600
+
+    AI is MUCH better... O starts after stalemate though
+
+commit 355dae4c91a586ef22c37d869bd0ad237e3d41eb
+Author: Katherine Brown <katherine.e.brown.68@gmail.com>
+Date:   Tue Dec 15 20:37:49 2015 -0600
+
+    AI is better. It now cheats...
+
+commit f09399b6ba8a8198f1071f6d14c0ebbf15ff82e0
+Author: Katherine Brown <katherine.e.brown.68@gmail.com>
+Date:   Tue Dec 15 19:32:55 2015 -0600
+
+    Added GUI (note GUI and AI are in same class. Not the most OO minded, but it works, right? AI is not defensive
+
+commit b9569d3f3cdfe28601416ad1ba262a37f2ac35e9
+Author: Katherine Brown <katherine.e.brown.68@gmail.com>
+Date:   Tue Dec 15 18:38:34 2015 -0600
+
+    First commit. AI is dumb. Other bugs exist

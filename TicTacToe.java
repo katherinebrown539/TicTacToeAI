@@ -9,7 +9,7 @@ public class TicTacToe extends JFrame
 	private JPanel button_panel = new JPanel(new GridLayout(3,3));
 	private JButton[] buttons = new JButton[9];
 	private TicTacToeAI ai;
-	
+	private Font meme_font = new Font("Impact", Font.BOLD, 24);
 	public static void main(String[] args)
 	{
 		TicTacToe ttt = new TicTacToe();
@@ -23,6 +23,7 @@ public class TicTacToe extends JFrame
 		{
 			buttons[i].setText("--");	
 			
+			
 		}
 	}
 	
@@ -30,6 +31,7 @@ public class TicTacToe extends JFrame
 	{
 		ai = new TicTacToeAI();
 		score = new JLabel("X: 0 O: 0 Ties: 0");
+		score.setFont(meme_font);
 		score_panel.add(score);
 		this.add(score_panel, BorderLayout.NORTH);
 		for(int i = 0; i <= 8; i++)
@@ -37,7 +39,7 @@ public class TicTacToe extends JFrame
 			buttons[i] = new JButton();
 			buttons[i].setActionCommand((i+1)+"");
 			buttons[i].setText("--");
-		
+			buttons[i].setFont(meme_font);
 			buttons[i].addActionListener(new XOActionListener());
 			button_panel.add(buttons[i]);
 			
