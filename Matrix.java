@@ -13,6 +13,13 @@ public class Matrix<T>
 		
 	}
 	
+	public Matrix(int r, int c, T[] items)
+	{
+		num_rows = r;
+		num_cols = c;
+		matrix = items;
+	}
+	
 	public T[] getArray()
 	{
 		return matrix;

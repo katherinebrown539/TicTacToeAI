@@ -8,11 +8,30 @@ public abstract class TicTacToeAITemplate extends JFrame
 	private int x_win = 0;
 	private int o_win = 0;
 	private int ties = 0;
-	private int num_picked = 0;
+	protected int num_picked = 0;
 	
 	public int getXWins() {return x_win;}
 	public int getOWins() {return o_win;}
 	public int getTies() {return ties;}
+	
+	public TicTacToeAITemplate(Matrix<Integer> b)
+	{
+		int num = 0;
+		
+		board = new Matrix<Integer>(3,3);
+		for(int r = 1; r <= 3; r++)
+		{
+			for(int c = 1; c <= 3; c++)
+			{
+				if(b.getElement(r,c) != 0) num++;
+				board.setElement(r,c, b.getElement(r,c));
+			}
+		}
+		this.num_picked = num;
+	}
+	
+	
+	public Matrix<Integer> getBoard(){return board;}
 	
 	public void reset()
 	{
@@ -25,6 +44,24 @@ public abstract class TicTacToeAITemplate extends JFrame
 		}
 		
 	}
+	
+	public int getNumPicked(){return num_picked;}
+	public void printBoard()
+	{
+		System.out.println("");
+		for(int r = 1; r <= 3; r++)
+		{
+			for(int c = 1; c <= 3; c++)
+			{
+				int val = board.getElement(r,c);
+				String p = (val == 0) ? "_ " : (val == 1) ? "X " : "O ";
+				System.out.print(p);
+			}
+			System.out.println("");
+		}
+	}
+	
+	public Integer getElement(int r, int c){return board.getElement(r,c);}
 	
 	public void markSpace(int row, int col, int val)
 	{
@@ -44,80 +81,95 @@ public abstract class TicTacToeAITemplate extends JFrame
 	}
 	
 	public abstract Move makeMove();
-	/*
-	public void playGame()
+
+	//1 if x is winner
+	//-1 if o is winner
+	//0 if no winner
+	//123 if tie
+	public int isWinnerAI()
 	{
-		Keyboard kb = Keyboard.getKeyboard();
-		int cols = board.getNumColumns();
-		while(!isWinner())
-		{
-			this.displayBoard();
-			System.out.println();
-			int selection = kb.readInt("\r\nEnter location: ");
-			board.setElement(((selection -1)/cols + 1), ((selection -1)%cols + 1),1);
-			this.displayBoard();
-			System.out.println();
-			Move next_move = this.makeMove();
-			//System.out.println(next_move.getRow());
-			//System.out.println(next_move.getCol());
-			board.setElement(next_move.getRow(), next_move.getCol(), -1);
-			this.displayBoard();
-			System.out.println();
-		}
-	}
-	
-	public void displayBoard()
-	{
-		int r = 0; 
-		int c = 0;
-		int cols = board.getNumColumns();
-		Object[] grid = (board.getArray());
-		for(int i = 1; i <= grid.length; i++)
-		{
-			r = (i-1)/cols +1;
-			c = (i-1)%cols +1;
-			int value = board.getElement(r,c);
-			if(value == 1)
-			{
-				System.out.print("X");
-			}
-			else if(value == -1)
-			{
-				System.out.print("O");
-			}
-			else
-			{
-				System.out.print(i);
-			}
-			
-			if(i != 3 && i != 6 && i != 9)
-			{
-				System.out.print("|");
-			}
-			else if(r != 3)
-			{
-				System.out.println("\r\n------");
-			}
-		}
-	}
-	
-	*/
-	public boolean isWinner()
-	{
-		
-		System.out.println("In check winner");
 		//check diagonal sums
 		int sum = upDiagonal();
 		if(sum == 3)
 		{
-			JOptionPane.showMessageDialog(this, "X Wins");
+			
+			return -1;
+		}
+		else if(sum == -3)
+		{
+			
+			return 1;
+		}
+		
+		sum = downDiagonal();
+		if(sum == 3)
+		{
+			
+			return -1;
+		}
+		else if(sum == -3)
+		{
+			
+			return 1;
+		}
+		//check row sums
+		for(int r = 1; r <= board.getNumRows(); r++)
+		{
+			sum = rowSum(r);
+			if(sum == 3)
+			{
+				
+				return -1;
+			}
+			else if(sum == -3)
+			{
+				
+				return 1;
+			}
+		}
+		//check vertical sums
+		for(int c = 1; c <= board.getNumColumns(); c++)
+		{
+			sum = columnSum(c);
+			if(sum == 3)
+			{
+				
+				return -1;
+			}
+			else if(sum == -3)
+			{
+				
+				return 1;
+			}
+		}
+		
+		if(num_picked == 9)
+		{
+			
+			return 0;
+		}
+		return 123;
+	}
+	
+	public boolean isWinner()
+	{
+		SimpleDialogs.useSystemStyle();
+		System.out.println("In check winner");
+		String x = "X Wins!";
+		String o = "O Wins!";
+		String tie = "Tie!";
+		//check diagonal sums
+		int sum = upDiagonal();
+		if(sum == 3)
+		{
+			SimpleDialogs.NormalOutput("GAME OVER!", x);
 			System.out.println("X Wins");
 			x_win++;
 			return true;
 		}
 		else if(sum == -3)
 		{
-			JOptionPane.showMessageDialog(this, "O Wins");
+			SimpleDialogs.NormalOutput("GAME OVER!", o);
 			System.out.println("O Wins");
 			o_win++;
 			return true;
@@ -126,14 +178,14 @@ public abstract class TicTacToeAITemplate extends JFrame
 		sum = downDiagonal();
 		if(sum == 3)
 		{
-			JOptionPane.showMessageDialog(this, "X Wins");
+			SimpleDialogs.NormalOutput("GAME OVER!", x);
 			System.out.println("X Wins");
 			x_win++;
 			return true;
 		}
 		else if(sum == -3)
 		{
-			JOptionPane.showMessageDialog(this, "O Wins");
+			SimpleDialogs.NormalOutput("GAME OVER!", o);
 			System.out.println("O Wins");
 			o_win++;
 			return true;
@@ -144,14 +196,14 @@ public abstract class TicTacToeAITemplate extends JFrame
 			sum = rowSum(r);
 			if(sum == 3)
 			{
-				JOptionPane.showMessageDialog(this, "X Wins");
+				SimpleDialogs.NormalOutput("GAME OVER!", x);
 				System.out.println("X Wins");
 				x_win++;
 				return true;
 			}
 			else if(sum == -3)
 			{
-				JOptionPane.showMessageDialog(this, "O Wins");
+				SimpleDialogs.NormalOutput("GAME OVER!", o);
 				System.out.println("O Wins");
 				o_win++;
 				return true;
@@ -163,14 +215,14 @@ public abstract class TicTacToeAITemplate extends JFrame
 			sum = columnSum(c);
 			if(sum == 3)
 			{
-				JOptionPane.showMessageDialog(this, "X Wins");
+				SimpleDialogs.NormalOutput("GAME OVER!", x);
 				System.out.println("X Wins");
 				x_win++;
 				return true;
 			}
 			else if(sum == -3)
 			{
-				JOptionPane.showMessageDialog(this, "O Wins");
+				SimpleDialogs.NormalOutput("GAME OVER!", x);
 				System.out.println("O Wins");
 				o_win++;
 				return true;
@@ -179,7 +231,7 @@ public abstract class TicTacToeAITemplate extends JFrame
 		
 		if(num_picked == 9)
 		{
-			JOptionPane.showMessageDialog(this, "TIE");
+			SimpleDialogs.NormalOutput("GAME OVER!", tie);
 			ties++;
 			return true;
 		}

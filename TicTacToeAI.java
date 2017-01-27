@@ -14,6 +14,11 @@ public class TicTacToeAI extends TicTacToeAITemplate
 	*/
 	
 	
+	public TicTacToeAI(Matrix<Integer> b)
+	{
+		super(b);
+	}
+	
 	public TicTacToeAI()
 	{
 		super();
